@@ -146,24 +146,24 @@ class Giveaway {
 			mons.forEach(function (value, key) {
 				let spriteid = value.spriteid;
 				if (value.otherForms) {
-					for (let i = 0; i < value.otherForms.length; i++) {
-						if (text.includes(value.otherForms[i])) {
-							spriteid += '-' + value.otherForms[i].substr(key.length);
+					for (const otherForm of value.otherForms) {
+						if (text.includes(otherForm)) {
+							spriteid += '-' + otherForm.substr(key.length);
 							break; // We don't want to end up with deerling-summer-spring
 						}
 					}
 				}
 				if (value.otherFormes) {
-					for (let i = 0; i < value.otherFormes.length; i++) {
+					for (const otherForme of value.otherFormes) {
 						// Allow "alolan <name>" to match as well.
-						if (value.otherFormes[i].endsWith('alola')) {
+						if (otherForme.endsWith('alola')) {
 							if (/alolan?/.test(text)) {
 								spriteid += '-alola';
 								break;
 							}
 						}
-						if (text.includes(value.otherFormes[i])) {
-							spriteid += '-' + value.otherFormes[i].substr(key.length);
+						if (text.includes(otherForme)) {
+							spriteid += '-' + otherForme.substr(key.length);
 							break; // We don't want to end up with landorus-therian-therian
 						}
 					}
@@ -234,8 +234,8 @@ class QuestionGiveaway extends Giveaway {
 
 		let sanitized = toId(guess);
 
-		for (let i = 0; i < this.answers.length; i++) {
-			if (toId(this.answers[i]) === sanitized) {
+		for (const answer of this.answers) {
+			if (toId(answer) === sanitized) {
 				this.winner = user;
 				this.clearTimer();
 				return this.end();
@@ -391,9 +391,9 @@ class LotteryGiveaway extends Giveaway {
 			let winnerNames = this.winners.map(winner => winner.name).join(', ');
 			this.room.modlog(`(wifi) GIVEAWAY WIN: ${winnerNames} won ${this.giver.name}'s giveaway for "${this.prize}" (OT: ${this.ot} TID: ${this.tid} FC: ${this.fc})`);
 			this.send(this.generateWindow(`<p style="text-align:center;font-size:10pt;font-weight:bold;">Lottery Draw</p><p style="text-align:center;">${Object.keys(this.joined).length} users joined the giveaway.<br />Our lucky winner${Chat.plural(this.winners)}: <b>${Chat.escapeHTML(winnerNames)}!</b> Congratulations!</p>`));
-			for (let i = 0; i < this.winners.length; i++) {
-				this.winners[i].sendTo(this.room, `|raw|You have won the lottery giveaway! PM <b>${this.giver.name}</b> (FC: ${this.fc}) to claim your prize!`);
-				if (this.winners[i].connected) this.winners[i].popup(`You have won the lottery giveaway! PM **${this.giver.name}** (FC: ${this.fc}) to claim your prize!`);
+			for (const winner of this.winners) {
+				winner.sendTo(this.room, `|raw|You have won the lottery giveaway! PM <b>${this.giver.name}</b> (FC: ${this.fc}) to claim your prize!`);
+				if (winner.connected) winner.popup(`You have won the lottery giveaway! PM **${this.giver.name}** (FC: ${this.fc}) to claim your prize!`);
 			}
 			if (this.giver.connected) this.giver.popup(`The following users have won your lottery giveaway:\n${winnerNames}`);
 			Giveaway.updateStats(this.monIds);
